@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>A营挖矿测试</title>
+        <style>
+            canvas {
+                border: solid 1px black;
+                image-rendering: pixelated;
+                vertical-align: top;
+            }
+            .progress-bar {
+                position: absolute;
+                width: 200px;
+                height: 20px;
+                border: solid 1px black;
+            }
+            .progress-bar .progress {
+                position: absolute;
+                height: 20px;
+                background-color: green;
+                transition: width 1s linear;
+            }
+            .progress-bar .curr {
+                position: absolute;
+                width: 1px;
+                height: 20px;
+                background-color: red;
+                transition: left 1s linear;
+                /* top: -20px; */
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <h1>阿尔法营 Worker 挖矿机性能测试</h1>
+            <p>
+                这是一个用于测试挖矿性能的网页，将会分别以单线程 Worker 和四线程 Worker 进行测试。
+                时间可能较长，可以打开控制台查看运行记录。
+            </p>
+            <button id="submit">开始测试</button>
+            <div class="progress-bar">
+                
+            </div>
+        </div>
+        <div style="border: solid black 1px; padding: 16px; margin-top: 25px;">
+            <code id="output">
+                测试结果将会输出到这里
+            </code>
+        </div>
+        <script src="playground.js"></script>
+    </body>
+</html>
