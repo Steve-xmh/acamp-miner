@@ -7,7 +7,7 @@ A module for the mining feature in Aerfaying Mozhua platform.
 - Pretty fast, using worker for boosting.
 - Planning GPU calculation (WebGL2), for further performance.
 
-## Develop usage
+## Development usage
 
 ### Testing
 
