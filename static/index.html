@@ -28,6 +28,9 @@
                 transition: left 1s linear;
                 /* top: -20px; */
             }
+            div.hide {
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -37,15 +40,29 @@
                 这是一个用于测试挖矿性能的网页，将会分别以单线程 Worker 和四线程 Worker 进行测试。
                 时间可能较长，可以打开控制台查看运行记录。
             </p>
-            <button id="submit">开始测试</button>
-            <div class="progress-bar">
-                
+            <strong></strong>
+        </div>
+        <button id="cpu">CPU 模式</button>
+        <button id="gpu">GPU 模式</button>
+        <div id="gpu">
+            <div>
+                <p> GPU 模式 </p>
+                <button id="submit">开始测试</button>
             </div>
         </div>
-        <div style="border: solid black 1px; padding: 16px; margin-top: 25px;">
-            <code id="output">
-                测试结果将会输出到这里
-            </code>
+        <div id="cpu" class="hide">
+            <div>
+                <p> CPU 模式 </p>
+                <button id="submit">开始测试</button>
+                <div class="progress-bar">
+                    
+                </div>
+            </div>
+            <div style="border: solid black 1px; padding: 16px; margin-top: 25px;">
+                <code id="output">
+                    测试结果将会输出到这里
+                </code>
+            </div>
         </div>
         <script src="playground.js"></script>
     </body>

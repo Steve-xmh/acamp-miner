@@ -8,6 +8,7 @@
 precision highp float;
 uniform sampler2D rawData; // 原始的数据纹理
 uniform float imageWidth; // 纹理的宽度（也代表长度，不过不需要）
+uniform int shaStr[40]; // 输入的字符串
 in vec3 v_pointPos; // 输入转换后与位图数据对齐的第一个像素的中心坐标，XY为位图位置，Z为当前计算的ID
 out vec4 color; // 输出的颜色值，按 RGBA 排序，都在 [0.0-1.0] 之间
 
