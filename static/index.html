@@ -35,7 +35,7 @@
     </head>
     <body>
         <div>
-            <h1>阿尔法营 Worker 挖矿机性能测试</h1>
+            <h1>阿儿法营 Worker 挖矿机性能基准测试</h1>
             <p>
                 这是一个用于测试挖矿性能的网页，将会分别以单线程 Worker 和四线程 Worker 进行测试。
                 时间可能较长，可以打开控制台查看运行记录。
@@ -44,19 +44,20 @@
         </div>
         <button id="cpu">CPU 模式</button>
         <button id="gpu">GPU 模式</button>
-        <div id="gpu">
+        <div id="gpu" class="hide">
             <div>
                 <p> GPU 模式 </p>
                 <button id="submit">开始测试</button>
             </div>
         </div>
-        <div id="cpu" class="hide">
+        <div id="cpu">
             <div>
                 <p> CPU 模式 </p>
+                <input id="sw" type="checkbox" checked="true">单线程 Worker</input>
+                <input id="fw" type="checkbox" checked="true">四线程 Worker</input>
+                <input id="wsw" type="checkbox" checked="true">单线程 WASM Worker</input>
+                <input id="wfw" type="checkbox" checked="true">四线程 WASM Worker</input>
                 <button id="submit">开始测试</button>
-                <div class="progress-bar">
-                    
-                </div>
             </div>
             <div style="border: solid black 1px; padding: 16px; margin-top: 25px;">
                 <code id="output">

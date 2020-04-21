@@ -10,7 +10,9 @@ interface MineInitData {
     /** 最后一个数字，必须大于等于起始数字 */
     endNumber: number
     /** 开头最少要有多少个零 */
-    minZeroCount: number
+    minZeroCount: number,
+    /** 是否编译 WASM（并启用） */
+    complieWasm?: boolean
 }
 
 /** 原石数据 */
@@ -65,12 +67,16 @@ class CPUMiner {
             const chunkPerThread = (mineData.endNumber - mineData.startNumber) / this.threads
             const result: number[] = []
             let workingThreads = this.threads
+            const self = this
             function onMsg (evt: MessageEvent) {
                 result.push(...(evt.data as number[]))
                 console.log(evt)
                 evt.target.removeEventListener('message', onMsg)
                 workingThreads--
-                if (workingThreads <= 0) resolve(result.sort((a, b) => a - b))
+                if (workingThreads <= 0) {
+                    self.isWorking = false
+                    resolve(result.sort((a, b) => a - b))
+                }
             }
             this.workers.forEach((v, i, a) => {
                 const missionData: MineInitData = {
@@ -79,9 +85,30 @@ class CPUMiner {
                     endNumber: mineData.startNumber + (i + 1) * chunkPerThread,
                     minZeroCount: mineData.minZeroCount
                 }
-                console.log(missionData)
                 v.addEventListener('message', onMsg)
                 v.postMessage(missionData)
+            })
+        })
+    }
+
+    /**
+     * 构建 WASM 并自动启用 WASM 计算
+     */
+    public buildWASM () {
+        return new Promise((resolve, reject) => {
+            if (this.isWorking) return reject(new Error('Miner is working'))
+            let finished = 0
+            const workers = this.workers
+            function onMsg (evt: MessageEvent) {
+                if (typeof evt.data === 'string' && (evt.data === 'WASMREADY' || evt.data === 'WASMFAILED')) {
+                    finished++
+                    evt.target.removeEventListener('message', onMsg)
+                    if (finished >= workers.length) resolve()
+                }
+            }
+            this.workers.forEach((v) => {
+                v.addEventListener('message', onMsg)
+                v.postMessage({ complieWasm: true })
             })
         })
     }

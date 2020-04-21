@@ -9,7 +9,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.worker.ts?$/,
+                test: /\.worker.ts$/,
                 use: {
                     loader: 'worker-loader',
                     options: {
@@ -19,7 +19,16 @@ module.exports = {
                 }
             },
             {
-                test: /\.glsl?$/,
+                test: /\.wasm$/,
+                type: 'javascript/auto',
+                use: [
+                    {
+                        loader: 'arraybuffer-loader'
+                    }
+                ]
+            },
+            {
+                test: /\.glsl$/,
                 use: [
                     process.env.MODE === 'production' ? {
                         loader: 'webpack-glsl-minify',
@@ -43,7 +52,7 @@ module.exports = {
         ]
     },
     resolve: {
-        extensions: ['.tsx', '.ts', '.js', '.glsl']
+        extensions: ['.tsx', '.ts', '.js', '.glsl', '.wasm']
     },
     output: {
         filename: '[name].js',

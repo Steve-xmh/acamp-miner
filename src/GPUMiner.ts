@@ -66,7 +66,7 @@ class GPUMiner {
         console.log(strArr)
         const buffer = gl.createBuffer()
         gl.bindBuffer(gl.SHADER_STORAGE_BUFFER, buffer)
-        gl.bufferData(gl.SHADER_STORAGE_BUFFER, new Uint32Array(MAX_THREAD_NUM), gl.DYNAMIC_COPY)
+        gl.bufferData(gl.SHADER_STORAGE_BUFFER, new Uint32Array(MAX_THREAD_NUM * 2), gl.DYNAMIC_COPY)
         gl.bindBufferBase(gl.SHADER_STORAGE_BUFFER, 0, buffer)
         const offsetUniform = gl.getUniformLocation(this.prog, 'offset')
         const sharedDataUniform = gl.getUniformLocation(this.prog, 'sharedData')
@@ -75,24 +75,25 @@ class GPUMiner {
         gl.uniform1uiv(sharedDataUniform, strArr)
         gl.dispatchCompute(MAX_THREAD_NUM, 1, 1)
         gl.memoryBarrier(gl.SHADER_STORAGE_BARRIER_BIT)
-        const result = new Uint32Array(MAX_THREAD_NUM)
+        const result = new Uint32Array(MAX_THREAD_NUM * 2)
         gl.getBufferSubData(gl.SHADER_STORAGE_BUFFER, 0, result)
         const resultHashes = result.join(' ').split(' ').map(v => Number(v).toString(16)).map(v => '0'.repeat(8 - v.length) + v)
-        for (let i = 0; i < MAX_THREAD_NUM; i++) {
-            const realHash = SHA1(front + (i + number)).toString()
-            const realHashSplited = realHash.substring(0, 8)
-            if (resultHashes[i] === realHash.substring(0, 8)) {
-                console.log('TRUE', resultHashes[i], realHashSplited)
-            } else {
-                console.log('FALSE', resultHashes[i], realHashSplited)
+        if (true) {
+            for (let i = 0; i < MAX_THREAD_NUM; i++) {
+                const hashStr = SHA1(front).toString() + (i + number)
+                const realHash = SHA1(hashStr).toString()
+                const realHashSplited = realHash.substring(0, 8)
+                if (resultHashes[i] === realHash.substring(0, 8)) {
+                    console.log('TRUE', hashStr, parseInt(resultHashes[i * 2], 16), resultHashes[i * 2 + 1], realHashSplited)
+                } else {
+                    console.log('FALSE', hashStr, parseInt(resultHashes[i * 2], 16), resultHashes[i * 2 + 1], realHashSplited)
+                }
+            }
+        } else {
+            for (let i = 0; i < MAX_THREAD_NUM; i++) {
+                console.log(result.slice(i * 50, i * 50 + 50).join(' ').split(' ').map(v => String.fromCharCode(Number(v))).join(''))
             }
         }
-        // console.log()
-        /*
-        for (let i = 0; i < MAX_THREAD_NUM; i++) {
-            console.log(result.slice(i * 50, i * 50 + 50).join(' ').split(' ').map(v => String.fromCharCode(Number(v))).join(''))
-        }
-        */
     }
 }
 

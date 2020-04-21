@@ -1,14 +1,15 @@
 #version 310 es
-precision highp float;
 
 #define MAX_THREAD_NUM [JS_MAX_THREAD_NUM]
 #define MAX_STRING_LENGTH 50
 
 layout (local_size_x = MAX_THREAD_NUM, local_size_y = 1, local_size_z = 1) in;
+// 输出结果的变量
 layout (std430, binding = 0) buffer BufferData {
     uint data[];
 } bufferData;
 uniform uint offset;
+// 输入的字符串数据
 uniform uint sharedData[40];
 
 uint hashStr[MAX_STRING_LENGTH];
@@ -28,14 +29,18 @@ void sha ()
         {
             m[i] = 0u;
         }
+        for (i = 0; i < 80; i++)
+        {
+            w[i] = 0u;
+        }
         for (i = 0; i < MAX_STRING_LENGTH; i++)
         {
-            if (i >= int(strLen)) break;
+            if (i > int(strLen)) break;
             n = 24 - ((i & 0x03) << 3);
             m[i / 4] |= (hashStr[i] << n);
         }
         n = 24 - ((i & 0x03) << 3);
-        m[1 / 4] |= 0x80u << n;
+        m[i / 4] |= 0x80u << n;
         m[15] = strLen * 8u;
     }
     {
@@ -142,23 +147,24 @@ void copy () {
         int i = 1;
         while (temp != 0u)
         {
-            hashStr[39 + int(numberLen) - i] = (temp % 10u) + 48u;
+            hashStr[40 + int(numberLen) - i] = (temp % 10u) + 48u;
             temp = (temp - temp % 10u) / 10u;
             i++;
         }
     }
-    /*
-    for (int i = 0; i < MAX_STRING_LENGTH; i++)
-    {
-        bufferData.data[ gl_LocalInvocationID.x * 50u + uint(i) ] = hashStr[i];
+    if(false) {
+        for (int i = 0; i < MAX_STRING_LENGTH; i++)
+        {
+            bufferData.data[ gl_LocalInvocationID.x * 50u + uint(i) ] = hashStr[i];
+        }
     }
-    */
 }
 
 void main()
 {
     copy();
     sha();
-    bufferData.data[ gl_LocalInvocationID.x ] = h[0] ;
+    bufferData.data[ gl_LocalInvocationID.x * 2u ] = ((strLen + 8u) >> 6) + 1u;
+    bufferData.data[ gl_LocalInvocationID.x * 2u + 1u ] = h[0] ;
     memoryBarrierShared();
 }
